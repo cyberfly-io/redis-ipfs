@@ -5,13 +5,15 @@ import { Blob } from 'node:buffer';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import fetch from 'node-fetch';
+import http from "http";
+import { Server } from "socket.io";
 
 dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
-const server = require("http").Server(app);
-const io = require("socket.io")(server, {
+const server = http.createServer(app);
+const io = new Server(server, {
   cors: {
     origin: "*",
   },

@@ -1,6 +1,7 @@
 {
-  "name": "@rip-db/server-example",
+  "name": "cyberfly-rip-db",
   "version": "1.0.0",
+  "type": "module",
   "description": "Server implementation to run rip-db",
   "main": "index.ts",
   "scripts": {
@@ -10,12 +11,13 @@
   "author": "zac@juicelabs.io",
   "license": "MIT",
   "dependencies": {
-    "@rip-db/server": "^1.0.3",
     "cors": "^2.8.5",
-    "cyberfly-rip-db-server": "^1.0.6",
+    "cyberfly-rip-db-server": "^1.0.7",
     "express": "^4.18.1",
     "nft.storage": "^7.0.0",
-    "node-fetch": "^3.2.10"
+    "node-fetch": "^3.2.10",
+    "socket.io": "^4.7.2",
+    "typescript": "^5.1.6"
   },
   "repository": {
     "type": "git",
