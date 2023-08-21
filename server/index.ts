@@ -1,5 +1,5 @@
 import express from 'express';
-import { RipDBServerClient } from '@rip-db/server';
+import { RipDBServerClient } from 'cyberfly-rip-db-server';
 import { NFTStorage } from 'nft.storage';
 import { Blob } from 'node:buffer';
 import dotenv from 'dotenv';
@@ -10,6 +10,13 @@ dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
+const server = require("http").Server(app);
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "*",
+  },
+});
+
 const port = 3000;
 
 const ripServer = new RipDBServerClient({
@@ -94,6 +101,23 @@ app.get('/ipfs/get/:key', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
+io.on("connection", (socket:any)=>{
+
+  socket.on("subscribe", async (channel: string)=>{
+    ripServer.subscribe(channel, (channel: string, message: string)=>{
+      io.emit("new message", {channel:channel, message:message})
+    })
+  })
+  socket.on("unsubscribe", async (channel: string)=>{
+    ripServer.unsubscribe(channel)
+  })
+  socket.on("send message", async(channel: string, message: string)=>{
+    ripServer.publish(channel, message)
+  })
+})
+
+
+
+server.listen(port, () => {
   console.log(`Example RipDB server listening on port ${port}`);
 });

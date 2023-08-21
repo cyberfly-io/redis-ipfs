@@ -17,6 +17,7 @@ import type {
 
 export class RipDBServerClient {
   private redisClient: RedisClientType;
+  private redisClientSub: RedisClientType
   private ipfsClient: NFTStorage;
   private gatewayUrl: string;
 
@@ -35,6 +36,8 @@ export class RipDBServerClient {
     this.ipfsClient = new NFTStorage({ token: ipfsApiKey });
     this.gatewayUrl = ipfsGatewayBaseUrl || 'https://ipfs.io/ipfs';
     this.redisClient.connect();
+    this.redisClientSub = this.redisClient.duplicate()
+    this.redisClientSub.connect()
     this.redisClient.on('error', (e) => {
       console.log('REDIS ERROR: ', e);
     });
@@ -163,4 +166,18 @@ export class RipDBServerClient {
     };
     await this.redisClient.set(key, JSON.stringify(nextWrapped));
   }
+
+public async publish(channel: string, message: string){
+  this.redisClient.publish(channel, message);
+}
+
+public async subscribe(channel: string, callback:any){
+  this.redisClientSub.subscribe(channel, (message: string)=>{
+   callback(channel, message)
+  })
+}
+
+public async unsubscribe(channel: string){
+  this.redisClientSub.unsubscribe(channel)
+}
 }
