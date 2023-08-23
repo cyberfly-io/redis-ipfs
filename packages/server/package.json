@@ -1,6 +1,6 @@
 {
   "name": "cyberfly-rip-db-server",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "type": "module",
   "description": "Redis backed by IPFS",
   "main": "dist/rip-server.es-node.js",

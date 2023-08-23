@@ -12,7 +12,7 @@
   "license": "MIT",
   "dependencies": {
     "cors": "^2.8.5",
-    "cyberfly-rip-db-server": "^1.0.7",
+    "cyberfly-rip-db-server": "1.0.8",
     "express": "^4.18.1",
     "nft.storage": "^7.0.0",
     "node-fetch": "^3.2.10",

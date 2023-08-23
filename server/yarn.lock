@@ -570,10 +570,10 @@ create-require@^1.1.0:
   resolved "https://registry.yarnpkg.com/create-require/-/create-require-1.1.1.tgz#c1d7e8f1e5f6cfc9ff65f9cd352d37348756c333"
   integrity sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==
 
-cyberfly-rip-db-server@^1.0.7:
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/cyberfly-rip-db-server/-/cyberfly-rip-db-server-1.0.7.tgz#ca3c89b2e281e275fdc6f3a8c42a03ddf941de02"
-  integrity sha512-+8PF1bNfq/tK4DcXWCyWBDofNLsQxZXpI2EDP9UxjybSGbsKEllwSwOspQ5VbZ+4wcYoN5RN5v+QRHBTl41SkQ==
+cyberfly-rip-db-server@1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/cyberfly-rip-db-server/-/cyberfly-rip-db-server-1.0.8.tgz#cef32d9b51a148be12c81e854343279b091925d2"
+  integrity sha512-KHST1eEF6uGpUnMmKZs9OFESkERlLyzXjwBAqFjlWIqM5zlkF6W+g7D6VTHZRuoAKOw9KLTFnufrLG6pve0Jhw==
   dependencies:
     async-retry "^1.3.3"
     nft.storage "^6.4.1"

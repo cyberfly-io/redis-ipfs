@@ -180,4 +180,11 @@ public async subscribe(channel: string, callback:any){
 public async unsubscribe(channel: string){
   this.redisClientSub.unsubscribe(channel)
 }
+public async xadd(streamName: string, message:any){
+return  this.redisClient.xAdd(streamName, '*', message)
+}
+public async xrange(streamName: string, afterMessageId:any){
+return this.redisClient.xRange(streamName, afterMessageId, '+')
+
+}
 }

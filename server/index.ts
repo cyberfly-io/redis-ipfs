@@ -103,6 +103,13 @@ app.get('/ipfs/get/:key', async (req, res) => {
   }
 });
 
+app.get('/chat/history', async (req, res) => {
+  const afterMessageId = req.query.after || '-';
+  const channel = req.query.channel
+  const response = await ripServer.xrange(channel.toString(), afterMessageId);
+  res.json(response);
+});
+
 io.on("connection", (socket:any)=>{
 
   socket.on("subscribe", async (channel: string)=>{
@@ -114,6 +121,7 @@ io.on("connection", (socket:any)=>{
     ripServer.unsubscribe(channel)
   })
   socket.on("send message", async(channel: string, message: string)=>{
+    ripServer.xadd(channel, {"message":message})
     ripServer.publish(channel, message)
   })
 })
