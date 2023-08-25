@@ -110,21 +110,46 @@ app.get('/chat/history', async (req, res) => {
   res.json(response);
 });
 
-io.on("connection", (socket:any)=>{
 
-  socket.on("subscribe", async (channel: string)=>{
-    ripServer.subscribe(channel, (channel: string, message: string)=>{
-      io.emit("new message", {channel:channel, message:message})
-    })
-  })
-  socket.on("unsubscribe", async (channel: string)=>{
-    ripServer.unsubscribe(channel)
-  })
+const subscribedSockets: Record<string, Set<string>> = {}; // Keep track of subscribed channels for each socket
+
+io.on("connection", (socket: any) => {
+  socket.on("subscribe", async (channel: string) => {
+    if (!subscribedSockets[socket.id]) {
+      subscribedSockets[socket.id] = new Set();
+    }
+    subscribedSockets[socket.id].add(channel);
+
+    ripServer.subscribe(channel, (channel: string, message: string) => {
+      if (subscribedSockets[socket.id]?.has(channel)) { // Check if the socket is subscribed to the channel
+        io.to(socket.id).emit("new message", { channel: channel, message: message });
+      }
+    });
+  });
+
+  socket.on("unsubscribe", async (channel: string) => {
+    if (subscribedSockets[socket.id]) {
+      subscribedSockets[socket.id].delete(channel);
+      if (subscribedSockets[socket.id].size === 0) {
+        delete subscribedSockets[socket.id];
+      }
+    }
+    ripServer.unsubscribe(channel);
+  });
   socket.on("send message", async(channel: string, stream:string ,message: string)=>{
     ripServer.xadd(stream, {"message":message})
     ripServer.publish(channel, message)
   })
-})
+  socket.on("disconnect", () => {
+    if (subscribedSockets[socket.id]) {
+      subscribedSockets[socket.id].forEach((channel) => {
+        ripServer.unsubscribe(channel);
+      });
+      delete subscribedSockets[socket.id];
+    }
+  });
+});
+
 
 
 
