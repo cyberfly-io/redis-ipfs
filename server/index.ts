@@ -7,6 +7,7 @@ import cors from 'cors';
 import fetch from 'node-fetch';
 import http from "http";
 import { Server } from "socket.io";
+import { check_authentication, getSteamName } from './utils.js';
 
 dotenv.config();
 const app = express();
@@ -137,11 +138,15 @@ io.on("connection", (socket: any) => {
     ripServer.unsubscribe(channel);
   });
   socket.on("send message", async(channel: string, stream:string ,message: string)=>{
-    const message_id = await ripServer.xadd(stream, {"message":message})
-    const parsed_message = JSON.parse(message)
-    parsed_message['message_id'] = message_id
-    socket.emit("message id", message_id);
-    ripServer.publish(channel, JSON.stringify(parsed_message))
+    const msg = JSON.parse(message)
+    const from_account = JSON.parse(msg['device_exec'])['fromAccount']
+    const public_key = from_account.split(':')[1]
+    if(stream===getSteamName(public_key, channel) && check_authentication(msg)){
+      const message_id = await ripServer.xadd(stream, {"message":message})
+      msg['message_id'] = message_id
+      socket.emit("message id", message_id);
+      ripServer.publish(channel, JSON.stringify(msg))
+    }
   })
   socket.on("disconnect", () => {
     if (subscribedSockets[socket.id]) {
