@@ -137,8 +137,10 @@ io.on("connection", (socket: any) => {
     ripServer.unsubscribe(channel);
   });
   socket.on("send message", async(channel: string, stream:string ,message: string)=>{
-    ripServer.xadd(stream, {"message":message})
-    ripServer.publish(channel, message)
+    const message_id = await ripServer.xadd(stream, {"message":message})
+    const parsed_message = JSON.parse(message)
+    parsed_message['message_id'] = message_id
+    ripServer.publish(channel, JSON.stringify(parsed_message))
   })
   socket.on("disconnect", () => {
     if (subscribedSockets[socket.id]) {
