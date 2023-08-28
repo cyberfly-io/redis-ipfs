@@ -105,10 +105,16 @@ app.get('/ipfs/get/:key', async (req, res) => {
 });
 
 app.get('/chat/history', async (req, res) => {
+  try{
   const afterMessageId = req.query.after || '-';
   const stream = req.query.stream
   const response = await ripServer.xrange(stream.toString(), afterMessageId);
   res.json(response);
+  }
+  catch(err){
+    console.log(err);
+    res.json([])
+  }
 });
 
 
@@ -141,7 +147,7 @@ io.on("connection", (socket: any) => {
     const msg = JSON.parse(message)
     const from_account = JSON.parse(msg['device_exec'])['fromAccount']
     const public_key = from_account.split(':')[1]
-    if(stream===getSteamName(public_key, channel) && check_authentication(msg)){
+    if(stream===getSteamName(public_key, channel) && public_key===msg.pubKey && check_authentication(msg)){
       const message_id = await ripServer.xadd(stream, {"message":message})
       msg['message_id'] = message_id
       socket.emit("message id", message_id);
