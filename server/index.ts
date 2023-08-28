@@ -140,6 +140,7 @@ io.on("connection", (socket: any) => {
     const message_id = await ripServer.xadd(stream, {"message":message})
     const parsed_message = JSON.parse(message)
     parsed_message['message_id'] = message_id
+    socket.emit("message id", message_id);
     ripServer.publish(channel, JSON.stringify(parsed_message))
   })
   socket.on("disconnect", () => {
