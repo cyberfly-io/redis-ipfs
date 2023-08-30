@@ -123,7 +123,8 @@ const subscribedSockets: Record<string, Set<string>> = {}; // Keep track of subs
 const userSockets = {}; // Store user sockets
 
 app.get('/chat/onlineusers', async(req, res)=>{
-res.json(Object.keys(userSockets))
+  const onlineusers = Object.keys(userSockets)
+   res.json(onlineusers)
 });
 io.on("connection", (socket: any) => {
   socket.on('online', (account:string) => {
