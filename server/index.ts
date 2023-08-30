@@ -129,7 +129,7 @@ io.on("connection", (socket: any) => {
   socket.on('typing', (data:any) => {
     const targetSocket = userSockets[data.targetAccount];
     if (targetSocket) {
-      targetSocket.emit('typing', {fromAccount: data.fromAccount });
+      targetSocket.emit('typing', {fromAccount: data.fromAccount, isTyping:data.isTyping });
     }
   });
 
