@@ -118,8 +118,13 @@ app.get('/chat/history', async (req, res) => {
 });
 
 
+
 const subscribedSockets: Record<string, Set<string>> = {}; // Keep track of subscribed channels for each socket
 const userSockets = {}; // Store user sockets
+
+app.get('/chat/onlineusers', async(req, res)=>{
+res.json(Object.keys(userSockets))
+});
 io.on("connection", (socket: any) => {
   socket.on('online', (account:string) => {
     userSockets[account] = socket; // Associate the socket with the account
