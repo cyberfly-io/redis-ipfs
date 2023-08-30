@@ -119,8 +119,20 @@ app.get('/chat/history', async (req, res) => {
 
 
 const subscribedSockets: Record<string, Set<string>> = {}; // Keep track of subscribed channels for each socket
-
+const userSockets = {}; // Store user sockets
 io.on("connection", (socket: any) => {
+  socket.on('online', (account:string) => {
+    userSockets[account] = socket; // Associate the socket with the account
+    io.emit('onlineUsers', Object.keys(userSockets));
+  });
+
+  socket.on('typing', (data:any) => {
+    const targetSocket = userSockets[data.targetAccount];
+    if (targetSocket) {
+      targetSocket.emit('typing', {fromAccount: data.fromAccount });
+    }
+  });
+
   socket.on("subscribe", async (channel: string) => {
     if (!subscribedSockets[socket.id]) {
       subscribedSockets[socket.id] = new Set();
@@ -160,6 +172,14 @@ io.on("connection", (socket: any) => {
         ripServer.unsubscribe(channel);
       });
       delete subscribedSockets[socket.id];
+    }
+
+    const disconnectedAccount = Object.keys(userSockets).find(
+      (account) => userSockets[account] === socket
+    );
+    if (disconnectedAccount) {
+      delete userSockets[disconnectedAccount];
+      io.emit('onlineUsers', Object.keys(userSockets));
     }
   });
 });
