@@ -156,6 +156,7 @@ io.on("connection", (socket: any) => {
     ripServer.unsubscribe(channel);
   });
   socket.on("send message", async(channel: string, stream:string ,message: string)=>{
+    try{
     const msg = JSON.parse(message)
     const from_account = JSON.parse(msg['device_exec'])['fromAccount']
     const public_key = from_account.split(':')[1]
@@ -165,6 +166,8 @@ io.on("connection", (socket: any) => {
       socket.emit("message id", message_id);
       ripServer.publish(channel, JSON.stringify(msg))
     }
+    }
+catch(err){console.log(err)}
   })
   socket.on("disconnect", () => {
     if (subscribedSockets[socket.id]) {
